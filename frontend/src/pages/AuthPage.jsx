@@ -9,6 +9,9 @@ export default function AuthPage({ onLoginSuccess }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Fallback to local address if the VITE_API_URL environment variable is missing
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password || (!isLogin && !name)) {
@@ -17,10 +20,9 @@ export default function AuthPage({ onLoginSuccess }) {
     }
 
     setErrorMsg('');
-    setLoading(false);
     setLoading(true);
 
-    const targetUrl = isLogin ? '/api/auth/login' : '/api/auth/register';
+    const targetUrl = isLogin ? `${API_BASE}/api/auth/login` : `${API_BASE}/api/auth/register`;
     const payload = isLogin ? { email, password } : { name, email, password, role };
 
     try {
@@ -37,10 +39,8 @@ export default function AuthPage({ onLoginSuccess }) {
       }
 
       if (isLogin) {
-        // Pass the structural token back up to App.jsx master node
         onLoginSuccess(data.token);
       } else {
-        // Toggle view port back to sign-in terminal upon successful registration
         setIsLogin(true);
         setErrorMsg('Registration successful. Access authorization cleared.');
       }
@@ -54,7 +54,6 @@ export default function AuthPage({ onLoginSuccess }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 font-sans text-slate-200">
       <div className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-lg p-6 shadow-2xl">
-        {/* Terminal Header Decoration */}
         <div className="flex items-center gap-1.5 mb-6 opacity-60">
           <span className="h-2 w-2 rounded-full bg-red-500"></span>
           <span className="h-2 w-2 rounded-full bg-amber-500"></span>
@@ -136,6 +135,7 @@ export default function AuthPage({ onLoginSuccess }) {
         </form>
 
         <button 
+          type="button"
           onClick={() => { setIsLogin(!isLogin); setErrorMsg(''); }} 
           className="w-full text-xs text-center text-blue-400 hover:underline mt-5 font-mono"
         >
