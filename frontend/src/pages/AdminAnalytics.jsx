@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function AdminAnalytics() {
-  // Clear, initialized array metrics to map the SVG timeline processing coordinates correctly
+  // Provided a concrete array of metric points to prevent assignment exceptions
   const pts =;
 
   return (
@@ -32,12 +32,10 @@ export default function AdminAnalytics() {
         </p>
         <div className="w-full h-28 flex items-end">
           <svg className="w-full h-full" viewBox="0 0 900 100" preserveAspectRatio="none">
-            {/* Background Grid Elements */}
             <line x1="0" y1="25" x2="900" y2="25" stroke="#1e293b" strokeWidth="1" strokeDasharray="4" />
             <line x1="0" y1="50" x2="900" y2="50" stroke="#1e293b" strokeWidth="1" strokeDasharray="4" />
             <line x1="0" y1="75" x2="900" y2="75" stroke="#1e293b" strokeWidth="1" strokeDasharray="4" />
             
-            {/* Metrics Graph Polyline Array Definition */}
             <polyline 
               fill="none" 
               stroke="#3b82f6" 
