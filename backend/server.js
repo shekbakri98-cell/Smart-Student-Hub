@@ -14,13 +14,16 @@ app.use(cors());
 app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// Sarara daandii API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/attendance', require('./routes/attendance'));
-app.use('/api/chatbot', require('./routes/chatbot'));
+app.use('/api/materials', require('./routes/materials'));
+app.use('/api/assignments', require('./routes/assignments'));
+app.use('/api/marks', require('./routes/marks'));
+app.use('/api/papers', require('./routes/papers'));
+app.use('/api/bot', require('./routes/chatbot'));
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/smartstudenthub')
-    .then(() => console.log('✅ MongoDB Connected Successfully'))
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('✅ MongoDB Connected'))
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 io.on('connection', (socket) => {
