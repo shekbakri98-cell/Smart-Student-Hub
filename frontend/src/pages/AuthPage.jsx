@@ -25,11 +25,16 @@ export default function AuthPage({ onLoginSuccess }) {
     const payload = isLogin ? { email, password } : { name, email, password, role };
 
     try {
-      const response = await fetch(targetUrl, {
+            const response = await fetch(targetUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        mode: 'cors', // Ensure cors mode is explicitly handled
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify(payload),
       });
+
 
       const data = await response.json();
 
