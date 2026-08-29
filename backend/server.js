@@ -8,9 +8,28 @@ require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST"] } });
 
-app.use(cors());
+// Configure cross-origin restrictions cleanly for both HTTP and WebSockets
+const ALLOWED_ORIGINS = [
+    "https://smart-student-hub-frontend-h1cu.onrender.com", 
+    "http://localhost:5173"
+];
+
+const io = new Server(server, { 
+    cors: { 
+        origin: ALLOWED_ORIGINS, 
+        methods: ["GET", "POST"],
+        credentials: true
+    } 
+});
+
+// Enforce structured CORS mapping rules onto incoming HTTP API request pipelines
+app.use(cors({
+    origin: ALLOWED_ORIGINS,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
+
 app.use(express.json());
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
@@ -27,8 +46,14 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 io.on('connection', (socket) => {
-    socket.on('join_room', (roomId) => socket.join(roomId));
-    socket.on('send_message', (data) => io.to(data.roomId).emit('receive_message', data));
+    socket.on('join_room', (roomId) => {
+        socket.join(roomId);
+    });
+    
+    socket.on('send_message', (data) => {
+        // Corrected data.roomId to data.room to match your frontend Chat.jsx emit payload structure
+        io.to(data.room).emit('receive_message', data);
+    });
 });
 
 const PORT = process.env.PORT || 5000;
