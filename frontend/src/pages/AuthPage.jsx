@@ -24,8 +24,9 @@ export default function AuthPage() {
         e.preventDefault();
         setStatusMessage("Ergaa iccitii terminal sarvariitti ergaa jira...");
         
-        // Daandii seensaa ykn galmeessaa filachuu
-        const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+        // Render Environment Variable irraa URL sarvarii backend fudhachuu
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const endpoint = isLogin ? `${baseUrl}/api/auth/login` : `${baseUrl}/api/auth/register`;
         
         try {
             const response = await fetch(endpoint, {
@@ -43,7 +44,10 @@ export default function AuthPage() {
                     localStorage.setItem('hub_token', data.token);
                     localStorage.setItem('user_role', data.user.role);
                     setStatusMessage("✅ Seensi kee milkaa'eera! Gara dashboard terminal'tti si geessaa jira...");
-                    // Gara dashboard'tti fiduuf asirratti window.location.reload() gochuu dandeessa
+                    // Gara dashboard'tti fiduuf window refreshing sequence jalqabsiisuu
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 } else {
                     setStatusMessage("✅ Galmeessi kee milkaa'eera! Amma seensa hojjechiisuu dandeessa.");
                     setIsLogin(true);
@@ -67,7 +71,6 @@ export default function AuthPage() {
                 </div>
 
                 <form onSubmit={handleFormSubmit} className="space-y-4">
-                    {/* Yoo Galmeessa (Register) ta'e maqaa gaafata */}
                     {!isLogin && (
                         <div>
                             <label className="block text-xs font-semibold text-slate-400 mb-1">Maqaa Guutuu</label>
@@ -97,7 +100,6 @@ export default function AuthPage() {
                         />
                     </div>
 
-                    {/* Yoo Galmeessa ta'e filannoowwan dabalataa dhiyeessa */}
                     {!isLogin && (
                         <div className="grid grid-cols-2 gap-3">
                             <div>
