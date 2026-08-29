@@ -1,42 +1,54 @@
 import React from 'react';
 
 export default function AdminAnalytics() {
-    // Array'n daataa duraan addaan citee ture asitti guutummaatti suphameera
-    const pts =;
+  // Populated dummy dataset array to cleanly map the SVG coordinate metrics chart points
+  const pts =;
 
-    return (
-        <div className="p-6 text-slate-100 max-w-6xl mx-auto space-y-6 bg-slate-950 min-h-screen">
-            <div className="border-b border-slate-800 pb-4">
-                <h1 className="text-2xl font-bold text-blue-400">System Oversight Matrix</h1>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                    <h6 className="text-xs text-slate-400 uppercase font-bold">Active Sockets</h6>
-                    <h2 className="text-xl font-bold text-amber-400 mt-1">200</h2>
-                </div>
-                <div className="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                    <h6 className="text-xs text-slate-400 uppercase font-bold">Edge Latency</h6>
-                    <h2 className="text-xl font-bold text-emerald-400 mt-1">42ms</h2>
-                </div>
-            </div>
-            <div className="bg-slate-900 p-6 rounded-xl border border-slate-800">
-                <h3 className="text-sm font-bold text-slate-300 mb-4">WebSocket System Processing Latency</h3>
-                <div className="w-full bg-[#0b0f19] border border-slate-800 rounded-lg p-4">
-                    <svg viewBox="0 0 700 200" className="w-full h-40 overflow-visible">
-                        <polyline 
-                            fill="none" 
-                            stroke="#3b82f6" 
-                            strokeWidth="3.5" 
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            points={pts.map((v, i) => `${i * 100 + 40},${200 - v * 1.5}`).join(' ')} 
-                        />
-                        {pts.map((v, i) => (
-                            <circle key={i} cx={i * 100 + 40} cy={200 - v * 1.5} r="5" className="fill-blue-400 stroke-slate-900 stroke-2" />
-                        ))}
-                    </svg>
-                </div>
-            </div>
+  return (
+    <div className="p-6 max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-lg space-y-4 font-mono shadow-2xl">
+      <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h2 className="text-md text-blue-400 font-bold uppercase tracking-wider">
+          System Oversight Matrix
+        </h2>
+        <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded animate-pulse">
+          LIVE_STREAMING
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div className="bg-slate-950 p-4 rounded border border-slate-800 flex justify-between items-center">
+          <span className="text-slate-400">Active Sockets:</span>
+          <span className="text-emerald-400 font-bold text-sm">200 / 200</span>
         </div>
-    );
+        <div className="bg-slate-950 p-4 rounded border border-slate-800 flex justify-between items-center">
+          <span className="text-slate-400">Edge Latency:</span>
+          <span className="text-blue-400 font-bold text-sm">42ms</span>
+        </div>
+      </div>
+
+      <div className="bg-slate-950 p-4 border border-slate-800 rounded h-48 relative overflow-hidden">
+        <p className="text-[10px] text-slate-500 mb-4 uppercase tracking-wider">
+          WebSocket System Processing Latency (Telemetry Stream)
+        </p>
+        <div className="w-full h-28 flex items-end">
+          <svg className="w-full h-full" viewBox="0 0 900 100" preserveAspectRatio="none">
+            {/* Background Grid Lines */}
+            <line x1="0" y1="25" x2="900" y2="25" stroke="#1e293b" strokeWidth="1" strokeDasharray="4" />
+            <line x1="0" y1="50" x2="900" y2="50" stroke="#1e293b" strokeWidth="1" strokeDasharray="4" />
+            <line x1="0" y1="75" x2="900" y2="75" stroke="#1e293b" strokeWidth="1" strokeDasharray="4" />
+            
+            {/* Metrics Graph Polyline */}
+            <polyline 
+              fill="none" 
+              stroke="#3b82f6" 
+              strokeWidth="3" 
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              points={pts.map((v, i) => `${i * 100 + 20},${100 - v}`).join(' ')} 
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
 }
