@@ -12,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 
 const ALLOWED_ORIGINS = [
-    "https://onrender.com", 
+    "https://smart-student-hub-frontend-h1cu.onrender.com", 
     "http://localhost:5173"
 ];
 
