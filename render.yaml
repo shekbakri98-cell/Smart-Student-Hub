@@ -1,9 +1,8 @@
 services:
-  # 🟢 1. BACKEND SERVICE LAYER (Node.js API Server - Free Plan)
+  # 🟢 1. BACKEND SERVICE LAYER (Node.js API Server - Free Instance)
   - type: web
     name: smart-student-hub-backend
     runtime: node
-    plan: free              # Sararri kun Render irratti kaffaltii malee bilisaan akka hojjetu godha
     rootDir: backend
     buildCommand: npm install
     startCommand: node server.js
@@ -15,11 +14,9 @@ services:
       - key: JWT_SECRET
         sync: false
 
-  # 🔵 2. FRONTEND STATIC HOSTING LAYER (React Vite Static Site)
-  - type: web
+  # 🔵 2. FRONTEND HOSTING LAYER (React Static Site - Fully Free)
+  - type: static_site
     name: smart-student-hub-frontend
-    runtime: static
-    plan: free              # Kuniis static hosting herrega kaffaltii akka hin gaafanne ittisa
     rootDir: frontend
     buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    publishDir: dist
