@@ -14,8 +14,8 @@ services:
       - key: JWT_SECRET
         sync: false
 
-  # 🔵 2. FRONTEND STATIC HOSTING LAYER (React Static Web Hosting)
-  - type: static
+  # 🔵 2. FRONTEND STATIC HOSTING LAYER (React Vite Static Site)
+  - type: static_site
     name: smart-student-hub-frontend
     rootDir: frontend
     buildCommand: npm install && npm run build
