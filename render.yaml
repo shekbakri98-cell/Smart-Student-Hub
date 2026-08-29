@@ -15,13 +15,9 @@ services:
         sync: false
 
   # 🔵 2. FRONTEND STATIC HOSTING LAYER (React Vite Static Site)
-  - type: web              # Gosti isaa 'web' ta'uu qaba
+  - type: web                  # Gosti isaa 'web' ta'uun isaa Render'f sirrii dha
     name: smart-student-hub-frontend
     runtime: static         # Inni kun static site ta'uu isaa Render'f mirkaneessa
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishDir: dist
-    routes:
-      - type: rewrite
-        src: /*
-        dest: /index.html
+    staticPublishPath: dist # Bakka 'publishDir' ture san 'staticPublishPath' kanaan bakka buusneerra
