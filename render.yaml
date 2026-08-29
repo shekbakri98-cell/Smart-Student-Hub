@@ -1,27 +1,27 @@
 services:
-  # 🟢 1. SARARA HOJII BACKEND (Node.js API Server)
+  # 🟢 1. BACKEND SERVICE LAYER (Node.js)
   - type: web
     name: smart-student-hub-backend
     runtime: node
-    rootDir: backend        # Foldara backend keessa seenee hojjeta
+    rootDir: backend
     buildCommand: npm install
     startCommand: node server.js
     envVars:
       - key: NODE_VERSION
         value: 18.18.0
       - key: MONGO_URI
-        sync: false        # Daandii Alwaysdata irraa fudhatte Render irratti galchita
+        sync: false
       - key: JWT_SECRET
-        sync: false        # Koodii iccitii JWT Render irratti galchita
+        sync: false
 
-  # 🔵 2. AGARSIIFTUU FRONTEND (React Static Web Hosting)
+  # 🔵 2. FRONTEND STATIC HOSTING LAYER (React Static Site)
   - type: web
     name: smart-student-hub-frontend
     runtime: static
-    rootDir: frontend       # Foldara frontend keessa seenee ijaara
+    rootDir: frontend
     buildCommand: npm install && npm run build
-    publishDir: dist        # Vite koodii xumurame foldara dist keessa kaaya
+    publishDir: dist
     routes:
       - type: rewrite
         src: /*
-        dest: /index.html   # React Router akka sirriitti hojjetuuf gargaara
+        dest: /index.html
