@@ -1,5 +1,5 @@
 services:
-  # 🟢 1. BACKEND SERVICE LAYER (Node.js API Server - Free Instance)
+  # 🟢 1. BACKEND SERVICE LAYER (Node.js API Server - Free Layer)
   - type: web
     name: smart-student-hub-backend
     runtime: node
@@ -15,8 +15,9 @@ services:
         sync: false
 
   # 🔵 2. FRONTEND HOSTING LAYER (React Static Site - Fully Free)
-  - type: static_site
+  - type: web                  # Gosti isaa 'web' ta'uu qaba
     name: smart-student-hub-frontend
+    runtime: static         # Inni kun static site ta'uu isaa Render'f mirkaneessa
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishDir: dist
+    staticPublishPath: dist # Render static site eeguuf kana fayyadama
