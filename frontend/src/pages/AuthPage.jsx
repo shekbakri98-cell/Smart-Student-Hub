@@ -9,7 +9,7 @@ export default function AuthPage({ onLoginSuccess }) {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'https://smart-student-hub-frontend-h1cu.onrender.com';
+  const API_BASE = import.meta.env.VITE_API_URL || 'https://smart-student-hub-backend-2upy.onrender.com';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
