@@ -13,7 +13,9 @@ try {
 
     console.log("⚛️ Compiling Frontend...");
     execSync('npm install && npm run build', { cwd: path.join(rootWorkspaceDir, 'frontend'), stdio: 'inherit' });
-    fs.cpSync(path.join(rootWorkspaceDir, 'frontend', 'dist'), path.join(productionTargetBuildDir, 'public_client_terminal'), { recursive: true });
+    
+    // 💡 FIXED: Changed folder name from 'public_client_terminal' to 'public' to match your server.js asset router pathing
+    fs.cpSync(path.join(rootWorkspaceDir, 'frontend', 'dist'), path.join(productionTargetBuildDir, 'public'), { recursive: true });
 
     console.log("📦 Bundling Backend...");
     fs.cpSync(path.join(rootWorkspaceDir, 'backend'), path.join(productionTargetBuildDir, 'server_core'), {
