@@ -1,152 +1,97 @@
 import React, { useState } from 'react';
 
 export default function AuthPage({ onLoginSuccess }) {
-  const [isLogin, setIsLogin] = useState(true);
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('Student');
-  const [errorMsg, setErrorMsg] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'https://smart-student-hub-backend-2upy.onrender.com';
-
-  const handleSubmit = async (e) => {
+  const handleLoginSequenceExecution = async (e) => {
     e.preventDefault();
-    if (!email || !password || (!isLogin && !name)) {
-      setErrorMsg('Please populate all mandatory fields.');
-      return;
-    }
+    setErrorMessage('');
+    setIsLoading(true);
 
-    setErrorMsg('');
-    setLoading(true);
-
-    const targetUrl = isLogin ? `${API_BASE}/api/auth/login` : `${API_BASE}/api/auth/register`;
-    const payload = isLogin ? { email, password } : { name, email, password, role };
+    // 💡 DYNAMIC NETWORK HOST OVERRIDE ARCHITECTURE
+    const isProduction = window.location.hostname !== 'localhost';
+    const BACKEND_URL = isProduction 
+      ? 'https://smart-student-hub-backend-2upy.onrender.com' 
+      : '';
 
     try {
-            const response = await fetch(targetUrl, {
+      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
-        mode: 'cors', // Ensure cors mode is explicitly handled
-        headers: { 
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
       });
-
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Network sequence execution error.');
+        throw new Error(data.message || data.error || "Authentication execution rejected.");
       }
 
-      if (isLogin) {
-        if (onLoginSuccess) onLoginSuccess(data.token);
-      } else {
-        setIsLogin(true);
-        setErrorMsg('Registration successful. Access authorization cleared.');
-      }
+      onLoginSuccess(data.token);
     } catch (err) {
-      setErrorMsg(err.message || 'Failed connecting to database cluster.');
+      console.error("❌ Authentication terminal loop crash:", err);
+      setErrorMessage(err.message === "Failed to fetch" ? "Network sequence execution error." : err.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#020617', padding: '16px', fontFamily: 'monospace', color: '#e2e8f0' }}>
-      <div style={{ width: '100%', maxWidth: '384px', backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', padding: '24px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 font-sans text-slate-200">
+      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-lg p-8 shadow-2xl relative">
+        <div className="absolute top-4 left-4 flex gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-red-500/60"></span>
+          <span className="w-2 h-2 rounded-full bg-yellow-500/60"></span>
+          <span className="w-2 h-2 rounded-full bg-green-500/60"></span>
+        </div>
         
-        {/* Terminal Header Decoration */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px', opacity: 0.6 }}>
-          <span style={{ height: '8px', width: '8px', borderRadius: '50%', backgroundColor: '#ef4444', marginRight: '6px' }}></span>
-          <span style={{ height: '8px', width: '8px', borderRadius: '50%', backgroundColor: '#f59e0b', marginRight: '6px' }}></span>
-          <span style={{ height: '8px', width: '8px', borderRadius: '50%', backgroundColor: '#10b981', marginRight: '8px' }}></span>
-          <span style={{ fontSize: '10px', tracking: '0.1em' }}>GATEWAY_AUTH</span>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-mono tracking-wide text-white font-bold">Smart Student Hub</h2>
+          <p className="text-xs font-mono text-slate-500 mt-1">Sign In to Terminal Node</p>
         </div>
 
-        <h2 style={{ fontSize: '20px', color: '#ffffff', textAlign: 'center', fontWeight: 'bold', margin: '0 0 4px 0', uppercase: 'true' }}>
-          Smart Student Hub
-        </h2>
-        <p style={{ fontSize: '12px', textAlign: 'center', color: '#94a3b8', margin: '0 0 20px 0' }}>
-          {isLogin ? "Sign In to Terminal Node" : "Register Account Profile"}
-        </p>
-
-        {errorMsg && (
-          <div style={{ marginTop: '16px', backgroundColor: 'rgba(127, 29, 29, 0.4)', border: '1px solid #991b1b', color: '#f87171', padding: '10px', borderRadius: '4px', fontSize: '12px', wordBreak: 'break-words' }}>
-            {errorMsg}
+        {errorMessage && (
+          <div className="mb-5 bg-red-950/40 border border-red-950 text-red-400 font-mono text-xs px-4 py-2.5 rounded text-center">
+            {errorMessage}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {!isLogin && (
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '4px' }}>Full Name</label>
-              <input 
-                type="text" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Identity string..." 
-                style={{ width: '100%', backgroundColor: '#020617', padding: '10px', borderRadius: '4px', border: '1px solid #1e293b', fontSize: '14px', color: '#ffffff', outline: 'none' }} 
-              />
-            </div>
-          )}
-
+        <form onSubmit={handleLoginSequenceExecution} className="space-y-5">
           <div>
-            <label style={{ display: 'block', fontSize: '11px', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '4px' }}>Email Endpoint</label>
+            <label className="block text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1.5">Email Endpoint</label>
             <input 
               type="email" 
-              value={email} 
+              required
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="user@hub.edu" 
-              style={{ width: '100%', backgroundColor: '#020617', padding: '10px', borderRadius: '4px', border: '1px solid #1e293b', fontSize: '14px', color: '#ffffff', outline: 'none' }} 
+              placeholder="user@hub.edu"
+              className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '11px', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '4px' }}>Access Token Password</label>
+            <label className="block text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-1.5">Access Token Password</label>
             <input 
               type="password" 
-              value={password} 
+              required
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••" 
-              style={{ width: '100%', backgroundColor: '#020617', padding: '10px', borderRadius: '4px', border: '1px solid #1e293b', fontSize: '14px', color: '#ffffff', outline: 'none' }} 
+              placeholder="••••••••••••"
+              className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
 
-          {!isLogin && (
-            <div>
-              <label style={{ display: 'block', fontSize: '11px', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '4px' }}>Institutional Role</label>
-              <select 
-                value={role} 
-                onChange={(e) => setRole(e.target.value)}
-                style={{ width: '100%', backgroundColor: '#020617', padding: '10px', borderRadius: '4px', border: '1px solid #1e293b', fontSize: '14px', color: '#d1d5db', outline: 'none' }}
-              >
-                <option value="Student">Student</option>
-                <option value="Teacher">Teacher</option>
-                <option value="Admin">Admin</option>
-              </select>
-            </div>
-          )}
-
           <button 
-            type="submit" 
-            disabled={loading}
-            style={{ width: '100%', backgroundColor: '#2563eb', color: '#ffffff', padding: '10px', borderRadius: '4px', fontSize: '12px', textTransform: 'uppercase', fontWeight: 'bold', border: 'none', cursor: 'pointer', opacity: loading ? 0.5 : 1, marginTop: '8px' }}
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-mono text-xs font-bold uppercase tracking-wider rounded transition-all shadow-lg active:scale-[0.99] disabled:opacity-50"
           >
-            {loading ? "Transmitting..." : "Execute Sequence"}
+            {isLoading ? "PROCESSING SEQUENCE..." : "EXECUTE SEQUENCE"}
           </button>
         </form>
-
-        <button 
-          type="button"
-          onClick={() => { setIsLogin(!isLogin); setErrorMsg(''); }} 
-          style={{ width: '100%', fontSize: '12px', textAlign: 'center', color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer', marginTop: '20px', textDecoration: 'underline' }}
-        >
-          {isLogin ? "[ Create Alternative Registry ]" : "[ Return to Active Terminal Sign In ]"}
-        </button>
       </div>
     </div>
   );
