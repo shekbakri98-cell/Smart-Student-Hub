@@ -5,33 +5,26 @@ const cors = require('cors');
 const path = require('path');
 const { Server } = require('socket.io');
 const bcrypt = require('bcryptjs');
-const User = require('./models/User'); // Import User model to handle auto-seed checks
+const User = require('./models/User'); 
 require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 
 const ALLOWED_ORIGINS = [
-    "https://smart-student-hub-frontend-h1cu.onrender.com", 
+    "https://onrender.com", 
     "http://localhost:5173"
 ];
 
 const io = new Server(server, { 
-    cors: { 
-        origin: ALLOWED_ORIGINS, 
-        methods: ["GET", "POST"],
-        credentials: true
-    } 
+    cors: { origin: ALLOWED_ORIGINS, methods: ["GET", "POST"], credentials: true } 
 });
 
-app.use(cors({
-    origin: ALLOWED_ORIGINS,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
-
+app.use(cors({ origin: ALLOWED_ORIGINS, methods: ["GET", "POST", "PUT", "DELETE"], credentials: true }));
 app.use(express.json());
-app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// Points asset delivery to root workspace folder map structure
+app.use('/public', express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/attendance', require('./routes/attendance'));
@@ -41,33 +34,28 @@ app.use('/api/marks', require('./routes/marks'));
 app.use('/api/papers', require('./routes/papers'));
 app.use('/api/bot', require('./routes/chatbot'));
 
-// Connect to Database and trigger the automated one-time baseline profile seed
 mongoose.connect(process.env.MONGO_URI)
     .then(async () => {
-        console.log('✅ MongoDB Connected');
-        
+        console.log('✅ MongoDB Connected Successfully');
         try {
-            // Check if our baseline users exist so we don't clear data repeatedly on every single restart
             const adminExists = await User.findOne({ email: "admin@hub.edu" });
-            
             if (!adminExists) {
-                console.log("⏳ Admin node missing. Initializing automated baseline infrastructure seeding process...");
+                console.log("⏳ Running baseline automated seeding procedure mapping vectors...");
                 const pass = await bcrypt.hash('HubPassword123!', 10);
-                
                 await User.insertMany([
                     { name: "Root Admin", email: "admin@hub.edu", password: pass, role: "Admin" },
                     { name: "Dr. Mehar", email: "teacher@hub.edu", password: pass, role: "Teacher" },
                     { name: "Sai Thanusha", email: "student@hub.edu", password: pass, role: "Student" }
                 ]);
-                console.log("✅ Cloud Database auto-seeded successfully with credentials mapping array!");
+                console.log("✅ Baseline records structured inside database framework.");
             } else {
-                console.log("ℹ️ Baseline records verified inside MongoDB cloud. Skipping auto-seed sequence.");
+                console.log("ℹ️ Identity records verified. Seed script processing skipped.");
             }
         } catch (seedErr) {
-            console.error("⚠️ Background seed routine interception error:", seedErr.message);
+            console.error("⚠️ Automated seeding interception anomaly caught:", seedErr.message);
         }
     })
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+    .catch(err => console.error('❌ Database context mapping failure:', err));
 
 io.on('connection', (socket) => {
     socket.on('join_room', (roomId) => socket.join(roomId));
