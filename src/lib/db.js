@@ -4,18 +4,18 @@ let pool;
 
 export async function connectToDatabase() {
   if (!pool) {
+    // This pool automatically routes requests to your Alwaysdata cloud tables
     pool = mysql.createPool({
-      // Uses your local XAMPP parameters unless a cloud URL exists in production
-      host: process.env.DB_HOST || '127.0.0.1',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || '', // XAMPP MySQL password is blank by default
-      database: process.env.DB_NAME || 'smart_student_hub',
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD, 
+      database: process.env.DB_NAME,
       port: parseInt(process.env.DB_PORT || '3306'),
       waitForConnections: true,
-      connectionLimit: 10,
+      connectionLimit: 5, // Keeping connection limits low for stable free-tier allocations
       queueLimit: 0
     });
-    console.log("⚙️ Database client connector pool established.");
+    console.log("✅ Alwaysdata Cloud Database connection pool initialized.");
   }
   return pool;
 }
